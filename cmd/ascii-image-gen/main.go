@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/cli"
@@ -9,27 +10,30 @@ import (
 )
 
 func main() {
+	// Remove datetime from logs
+	log.SetFlags(0)
+
 	// Parse command line flags and args
 	config, err := cli.ParseFlags()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	imgPaths, err := cli.ParseArgs()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	// Process each image
 	for _, imgPath := range imgPaths {
-		fmt.Printf("Processing: %s\n", imgPath)
+		log.Printf("Processing: %s\n", imgPath)
 
 		// Generate ASCII
 		ascii, err := generator.ImageFileToASCII(imgPath, *config)
 		if err != nil {
-			fmt.Printf("Error processing %s: %v\n", imgPath, err)
+			log.Printf("Error processing %s: %v\n", imgPath, err)
 			continue
 		}
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/generator"
+	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
 
 // Parses command line flags and returns config
@@ -30,6 +31,10 @@ func ParseFlags() (*generator.Config, error) {
 	
 	// Parse flags
 	flag.Parse()
+
+	if config.Colour && !utils.SupportsColour() {
+        return nil, fmt.Errorf("terminal does not support colours")
+	}
 
 	if config.Colour && config.Greyscale {
         return nil, fmt.Errorf("cannot use -colour and -greyscale together")
