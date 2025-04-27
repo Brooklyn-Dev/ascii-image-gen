@@ -14,6 +14,7 @@ type Config struct {
 	Colour bool
 	Greyscale bool
 	Invert bool
+	Negative bool
 	Width int
 }
 
@@ -43,6 +44,12 @@ func ImageToASCII(img image.Image, config Config) string {
 			r8 := uint8(r >> 8)
 			g8 := uint8(g >> 8)
 			b8 := uint8(b >> 8)
+
+			if config.Negative {
+				r8 = ^r8
+				g8 = ^g8
+				b8 = ^b8
+			}
 
 			grey, idx := computeBrightness(r8, g8, b8)
 			grey8 := uint8(grey)

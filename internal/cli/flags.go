@@ -13,6 +13,7 @@ func ParseFlags() (*generator.Config, error) {
 		Colour: false,
 		Greyscale: false,
 		Invert: false,
+		Negative: false,
 		Width: 100,
 	}
 
@@ -20,6 +21,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Colour, "colour", false, "Colour the generated ascii")
 	flag.BoolVar(&config.Greyscale, "greyscale", false, "Grey the generated ascii")
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
+	flag.BoolVar(&config.Negative, "negative", false, "Negate colours / greys")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ascii")
 	
 	// Parse flags
@@ -27,6 +29,10 @@ func ParseFlags() (*generator.Config, error) {
 
 	if config.Colour && config.Greyscale {
         return nil, fmt.Errorf("cannot use -colour and -greyscale together")
+    }
+
+	if config.Negative && !(config.Colour || config.Greyscale) {
+        return nil, fmt.Errorf("negative requires -colour or -greyscale")
     }
 
 	if config.Width <= 0 {
