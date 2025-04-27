@@ -13,13 +13,25 @@ func ParseFlags() (*generator.Config, error) {
 	config := generator.Config{
 		Colour: false,
 		Complex: false,
+		FlipX: false,
+		FlipY: false,
 		Greyscale: false,
 		Invert: false,
 		Negative: false,
 		Width: 100,
 	}
 
-	// Define flags
+	// Define short flags
+	flag.BoolVar(&config.Colour, "c", false, "Colour the generated ASCII")
+	flag.BoolVar(&config.Complex, "C", false, "Use a more detailed character ramp")
+	flag.BoolVar(&config.FlipX, "x", false, "Horizontally flip the generated ASCII")
+	flag.BoolVar(&config.FlipY, "y", false, "Vertically flip the generated ASCII")
+	flag.BoolVar(&config.Greyscale, "g", false, "Grey the generated ASCII")
+	flag.BoolVar(&config.Invert, "i", false, "Invert the character ramp")
+	flag.BoolVar(&config.Negative, "n", false, "Negate colours of all characters")
+	flag.IntVar(&config.Width, "w", 100, "Width of the generated ASCII")
+
+	// Define long flags
 	flag.BoolVar(&config.Colour, "colour", false, "Colour the generated ASCII")
 	flag.BoolVar(&config.Complex, "complex", false, "Use a more detailed character ramp")
 	flag.BoolVar(&config.FlipX, "flip-x", false, "Horizontally flip the generated ASCII")
