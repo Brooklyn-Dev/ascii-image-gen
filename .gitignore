@@ -1,0 +1,9 @@
+# Binaries and build artifacts
+build/
+bin/
+*.exe
+*.exe~
+
+# Temp input / output files
+examples/input/*
+examples/output/*
