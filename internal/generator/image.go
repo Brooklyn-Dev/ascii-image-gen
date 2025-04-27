@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -45,6 +46,11 @@ func resizeImage(img image.Image, config Config) image.Image {
 	aspectRatio := float64(origHeight) / float64(origWidth)
 
 	newWidth := config.Width
+	if config.Width > origWidth {
+		newWidth = origWidth // Auto-limit width
+		fmt.Printf("Warning: input width is greater than image width. Using image width (%d) instead", origWidth)
+	}
+
 	newHeight := int(aspectRatio * float64(newWidth) * aspectCorrection)
 
 	newImg := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))

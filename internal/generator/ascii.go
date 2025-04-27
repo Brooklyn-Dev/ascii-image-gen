@@ -4,16 +4,20 @@ import (
 	"image"
 	"strings"
 
+	"github.com/gookit/color"
+
 	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
 
 // Config for generator options
 type Config struct {
-	Width int
+	Colour bool
+	Greyscale bool
 	Invert bool
+	Width int
 }
 
-const charRamp = "@%#*+=-:."
+const charRamp = ".:-=+*#%@"
 
 // Generates ASCII string from image
 func ImageToASCII(img image.Image, config Config) string {
@@ -40,23 +44,38 @@ func ImageToASCII(img image.Image, config Config) string {
 			g8 := uint8(g >> 8)
 			b8 := uint8(b >> 8)
 
-			// Weighted greyscale
-			grey := 0.299 * float64(r8) + 0.587 * float64(g8) + 0.144 * float64(b8)
+			grey, idx := computeBrightness(r8, g8, b8)
+			grey8 := uint8(grey)
 
-			// Map to char index
-			index := int(grey * float64(len(charRamp) - 1) / 255)
-			if index >= len(charRamp) {
-				index = len(charRamp) - 1
-			} else if index < 0 {
-				index = 0
+			char := string(brightnessRamp[idx])
+
+			if config.Colour {
+				builder.WriteString(color.RGB(r8, g8, b8).Sprint((char)))
+			} else if config.Greyscale {
+				builder.WriteString(color.RGB(grey8, grey8, grey8).Sprint((char)))
+			} else {
+				builder.WriteString(char)
 			}
-
-			char := string(brightnessRamp[index])
-			builder.WriteString(char)
 		}
 
 		builder.WriteString("\n")
 	}
 
 	return builder.String()
+}
+
+// Calculates the greyscale value and maps it to a character index
+func computeBrightness(r, g, b uint8) (float64, int) {
+	// Weighted greyscale
+	grey := 0.299 * float64(r) + 0.587 * float64(g) + 0.114 * float64(b)
+
+	// Map to char index
+	index := int(grey * float64(len(charRamp) - 1) / 255)
+	if index >= len(charRamp) {
+		index = len(charRamp) - 1
+	} else if index < 0 {
+		index = 0
+	}
+
+	return grey, index
 }
