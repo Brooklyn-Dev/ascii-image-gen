@@ -12,22 +12,28 @@ import (
 // Config for generator options
 type Config struct {
 	Colour bool
+	Complex bool
 	Greyscale bool
 	Invert bool
 	Negative bool
 	Width int
 }
 
-const charRamp = ".:-=+*#%@"
+// Ramps taken from http://paulbourke.net/dataformats/asciiart/
+const simpleRamp = ".:-=+*#%@"
+const complexRamp = ".'`^\",:;Il!i><~+_-?]}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 // Generates ASCII string from image
 func ImageToASCII(img image.Image, config Config) string {
 	bounds := img.Bounds()
 	var builder strings.Builder
 
-	brightnessRamp := charRamp
+	brightnessRamp := simpleRamp
+	if config.Complex {
+		brightnessRamp = complexRamp	
+	}
 	if config.Invert {
-		brightnessRamp = utils.ReverseString(charRamp)
+		brightnessRamp = utils.ReverseString(brightnessRamp)
 	}
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
@@ -51,7 +57,7 @@ func ImageToASCII(img image.Image, config Config) string {
 				b8 = ^b8
 			}
 
-			grey, idx := computeBrightness(r8, g8, b8)
+			grey, idx := computeBrightness(r8, g8, b8, brightnessRamp)
 			grey8 := uint8(grey)
 
 			char := string(brightnessRamp[idx])
@@ -72,7 +78,7 @@ func ImageToASCII(img image.Image, config Config) string {
 }
 
 // Calculates the greyscale value and maps it to a character index
-func computeBrightness(r, g, b uint8) (float64, int) {
+func computeBrightness(r, g, b uint8, charRamp string) (float64, int) {
 	// Weighted greyscale
 	grey := 0.299 * float64(r) + 0.587 * float64(g) + 0.114 * float64(b)
 

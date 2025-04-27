@@ -11,6 +11,7 @@ import (
 func ParseFlags() (*generator.Config, error) {
 	config := generator.Config{
 		Colour: false,
+		Complex: false,
 		Greyscale: false,
 		Invert: false,
 		Negative: false,
@@ -19,6 +20,7 @@ func ParseFlags() (*generator.Config, error) {
 
 	// Define flags
 	flag.BoolVar(&config.Colour, "colour", false, "Colour the generated ascii")
+	flag.BoolVar(&config.Complex, "complex", false, "Use a more detailed character ramp")
 	flag.BoolVar(&config.Greyscale, "greyscale", false, "Grey the generated ascii")
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "negative", false, "Negate colours / greys")
