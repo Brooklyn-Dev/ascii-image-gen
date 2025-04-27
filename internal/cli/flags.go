@@ -14,6 +14,7 @@ func ParseFlags() (generator.Config) {
 
 	// Define flags
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ascii")
+	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	
 	// Parse flags
 	flag.Parse()

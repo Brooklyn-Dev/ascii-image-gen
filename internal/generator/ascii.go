@@ -3,11 +3,14 @@ package generator
 import (
 	"image"
 	"strings"
+
+	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
 
 // Config for generator options
 type Config struct {
 	Width int
+	Invert bool
 }
 
 const charRamp = "@%#*+=-:."
@@ -16,6 +19,11 @@ const charRamp = "@%#*+=-:."
 func ImageToASCII(img image.Image, config Config) string {
 	bounds := img.Bounds()
 	var builder strings.Builder
+
+	brightnessRamp := charRamp
+	if config.Invert {
+		brightnessRamp = utils.ReverseString(charRamp)
+	}
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
@@ -43,7 +51,7 @@ func ImageToASCII(img image.Image, config Config) string {
 				index = 0
 			}
 
-			char := string(charRamp[index])
+			char := string(brightnessRamp[index])
 			builder.WriteString(char)
 		}
 

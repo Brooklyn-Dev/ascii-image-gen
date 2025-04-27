@@ -32,7 +32,3 @@ func main() {
 		fmt.Println(ascii)
 	}
 }
-
-
-
-
