@@ -7,6 +7,7 @@ import (
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/cli"
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/generator"
+	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
 
 func main() {
@@ -39,5 +40,21 @@ func main() {
 
 		// Print result
 		fmt.Println(ascii)
+		
+		// Save if applicable
+		if config.SaveText {
+			filename := utils.CreateSaveFilename(imgPath, ".txt")
+			log.Printf("Saving: %s\n", filename)
+
+			if config.Colour {
+				ascii = utils.StripANSI(ascii)
+			}
+
+			err := utils.SaveAsText(ascii, filename)
+			if err != nil {
+				log.Printf("Error saving %s: %v\n", filename, err)
+				continue
+			}	
+		}
 	}
 }

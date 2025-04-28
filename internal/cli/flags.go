@@ -20,6 +20,7 @@ func ParseFlags() (*generator.Config, error) {
 		Greyscale: false,
 		Invert: false,
 		Negative: false,
+		SaveText: false,
 		Width: 100,
 	}
 

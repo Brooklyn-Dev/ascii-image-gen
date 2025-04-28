@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -21,4 +23,17 @@ func CreateSquare(size int, char string, aspectRatio float64) string {
     square := strings.Repeat(line + "\n", size)
 
 	return square
+}
+
+// Creates a filename string
+func CreateSaveFilename(imgPath string, newExt string) string {
+	filename := filepath.Base(imgPath) 
+    ext := filepath.Ext(imgPath)
+    return strings.TrimSuffix(filename, ext) + "-ascii-art" + newExt
+}
+
+var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+// Removes all ANSI codes from a string
+func StripANSI(str string) string {
+    return ansiRegexp.ReplaceAllString(str, "")
 }
