@@ -19,6 +19,7 @@ type Config struct {
 	Greyscale bool
 	Invert bool
 	Negative bool
+	SaveDir string
 	SaveText bool
 	Width int
 }

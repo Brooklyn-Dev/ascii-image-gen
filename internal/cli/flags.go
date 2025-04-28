@@ -33,6 +33,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Greyscale, "g", false, "Grey the generated ASCII")
 	flag.BoolVar(&config.Invert, "i", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "n", false, "Negate colours of all characters")
+	flag.StringVar(&config.SaveDir, "d", "", "Save directory of saved files")
 	flag.IntVar(&config.Width, "w", 100, "Width of the generated ASCII")
 
 	// Define long flags
@@ -46,6 +47,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Greyscale, "greyscale", false, "Grey the generated ASCII")
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "negative", false, "Negate colours of all characters")
+	flag.StringVar(&config.SaveDir, "save-dir", "", "Save directory of saved files")
 	flag.BoolVar(&config.SaveText, "save-text", false, "Save output ascii in text file(s)")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ASCII")
 

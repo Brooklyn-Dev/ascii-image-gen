@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/cli"
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/generator"
@@ -44,15 +45,27 @@ func main() {
 		// Save if applicable
 		if config.SaveText {
 			filename := utils.CreateSaveFilename(imgPath, ".txt")
-			log.Printf("Saving: %s\n", filename)
-
+			
 			if config.Colour {
 				ascii = utils.StripANSI(ascii)
 			}
+			
+			saveDir := ""
+			if config.SaveDir != "" {
+				if !utils.IsValidPath(config.SaveDir) {
+					log.Println(fmt.Errorf("invalid output directory: %s", config.SaveDir))
+					os.Exit(1)
+				}
 
-			err := utils.SaveAsText(ascii, filename)
+				saveDir = config.SaveDir
+			}
+			
+			savePath := filepath.Join(saveDir, filename)
+			log.Printf("Saving: %s\n", savePath)
+
+			err := utils.SaveAsText(ascii, savePath)
 			if err != nil {
-				log.Printf("Error saving %s: %v\n", filename, err)
+				log.Printf("Error saving %s: %v\n", savePath, err)
 				continue
 			}	
 		}
