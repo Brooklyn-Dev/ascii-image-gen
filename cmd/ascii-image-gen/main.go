@@ -61,9 +61,16 @@ func main() {
 			}
 			
 			savePath := filepath.Join(saveDir, filename)
+
+			savePath, err := utils.FindAvaliablePath(savePath)
+			if err != nil {
+				log.Printf("Error preparing save path: %v\n", err)
+				continue
+			}
+
 			log.Printf("Saving: %s\n", savePath)
 
-			err := utils.SaveAsText(ascii, savePath)
+			err = utils.SaveAsText(ascii, savePath)
 			if err != nil {
 				log.Printf("Error saving %s: %v\n", savePath, err)
 				continue
