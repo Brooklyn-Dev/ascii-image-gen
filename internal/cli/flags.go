@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/generator"
 	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
@@ -11,6 +12,7 @@ import (
 // Parses command line flags and returns config
 func ParseFlags() (*generator.Config, error) {
 	config := generator.Config{
+		AspectRatio: 0.5,
 		Colour: false,
 		Complex: false,
 		FlipX: false,
@@ -22,6 +24,7 @@ func ParseFlags() (*generator.Config, error) {
 	}
 
 	// Define short flags
+	flag.Float64Var(&config.AspectRatio, "a", 0.5, "Character aspect ratio (width:height) for your terminal font")
 	flag.BoolVar(&config.Colour, "c", false, "Colour the generated ASCII")
 	flag.BoolVar(&config.Complex, "C", false, "Use a more detailed character ramp")
 	flag.BoolVar(&config.FlipX, "x", false, "Horizontally flip the generated ASCII")
@@ -32,6 +35,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.IntVar(&config.Width, "w", 100, "Width of the generated ASCII")
 
 	// Define long flags
+	flag.Float64Var(&config.AspectRatio, "aspect-ratio", 0.5, "Character aspect ratio (width:height) for your terminal font")
 	flag.BoolVar(&config.Colour, "colour", false, "Colour the generated ASCII")
 	flag.BoolVar(&config.Complex, "complex", false, "Use a more detailed character ramp")
 	flag.BoolVar(&config.FlipX, "flip-x", false, "Horizontally flip the generated ASCII")
@@ -40,10 +44,34 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "negative", false, "Negate colours of all characters")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ASCII")
-	
+
+	calibratePtr := flag.Bool("calibrate", false, "Calibrate to help manually determine aspect ratio")
+	calibrationSizePtr := flag.Int("calibration-size", 16, "Size of the calibration test")
+
 	// Parse flags
 	flag.Parse()
 
+	if *calibratePtr {
+		if *calibrationSizePtr <= 0 {
+			return nil, fmt.Errorf("calibration-size must be greater than 0")
+		}
+
+		if *calibrationSizePtr >= 33 {
+			return nil, fmt.Errorf("calibration-size must be less than 33")
+		}
+
+		testChar := "█"
+		if !utils.SupportsUnicode(testChar) {
+			testChar = "@"
+		}
+
+		square := utils.CreateSquare(*calibrationSizePtr, testChar, config.AspectRatio)
+		fmt.Print(square)
+
+		os.Exit(0)
+	}
+
+	// Flag combination validations
 	if config.Colour && !utils.SupportsColour() {
         return nil, fmt.Errorf("terminal does not support colours")
 	}

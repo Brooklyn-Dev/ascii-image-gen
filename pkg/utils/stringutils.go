@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"strings"
+)
+
 // Reverses the characters of a string
 func ReverseString(s string) string {
 	runes := []rune(s)
@@ -7,4 +11,14 @@ func ReverseString(s string) string {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
 	return string(runes)
+}
+
+// Creates a square string
+func CreateSquare(size int, char string, aspectRatio float64) string {
+	width := int(float64(size) / aspectRatio)
+	
+    line := strings.Repeat(char, width)
+    square := strings.Repeat(line + "\n", size)
+
+	return square
 }

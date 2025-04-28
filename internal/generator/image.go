@@ -13,8 +13,6 @@ import (
 	"golang.org/x/image/webp"
 )
 
-const aspectCorrection = 0.4
-
 // Loads an image from a file path
 func loadImage(imgPath string) (image.Image, error) {
 	file, err := os.Open(imgPath)
@@ -51,7 +49,7 @@ func resizeImage(img image.Image, config Config) image.Image {
 		fmt.Printf("Warning: input width is greater than image width. Using image width (%d) instead", origWidth)
 	}
 
-	newHeight := int(aspectRatio * float64(newWidth) * aspectCorrection)
+	newHeight := int(aspectRatio * float64(newWidth) * config.AspectRatio)
 
 	newImg := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.ApproxBiLinear.Scale(newImg, newImg.Bounds(), img, origBounds, draw.Over, nil)

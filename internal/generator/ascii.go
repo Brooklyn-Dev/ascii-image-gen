@@ -11,6 +11,7 @@ import (
 
 // Config for generator options
 type Config struct {
+	AspectRatio float64
 	Colour bool
 	Complex bool
 	FlipX bool
