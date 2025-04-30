@@ -2,8 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"image"
 	"os"
 	"path/filepath"
+
+	"image/png"
 )
 
 // Check if specified path is valid
@@ -39,7 +42,18 @@ func FindAvaliablePath(basePath string) (string, error) {
     }
 }
 
-// Save string content in a text file
+// Save string content in a TXT file
 func SaveAsText(content string, path string) error {
     return os.WriteFile(path, []byte(content), 0644)
+}
+
+// Save image in a PNG file
+func SaveAsPNG(img image.Image, path string) error {
+    file, err := os.Create(path)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    return png.Encode(file, img)
 }

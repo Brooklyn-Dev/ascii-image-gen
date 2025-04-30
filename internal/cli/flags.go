@@ -20,6 +20,8 @@ func ParseFlags() (*generator.Config, error) {
 		Greyscale: false,
 		Invert: false,
 		Negative: false,
+		SaveDir: "",
+		SavePNG: false,
 		SaveText: false,
 		Width: 100,
 	}
@@ -48,7 +50,8 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "negative", false, "Negate colours of all characters")
 	flag.StringVar(&config.SaveDir, "save-dir", "", "Save directory of saved files")
-	flag.BoolVar(&config.SaveText, "save-text", false, "Save output ascii in text file(s)")
+	flag.BoolVar(&config.SavePNG, "save-png", false, "Save generated ASCII in png file(s)")
+	flag.BoolVar(&config.SaveText, "save-text", false, "Save generated ASCII in text file(s)")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ASCII")
 
 	calibratePtr := flag.Bool("calibrate", false, "Calibrate to help manually determine aspect ratio")

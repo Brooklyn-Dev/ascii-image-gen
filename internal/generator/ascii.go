@@ -2,9 +2,15 @@ package generator
 
 import (
 	"image"
+	imageColor "image/color"
+	"image/draw"
 	"strings"
 
 	"github.com/gookit/color"
+	"github.com/leaanthony/go-ansi-parser"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/math/fixed"
 
 	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
@@ -20,6 +26,7 @@ type Config struct {
 	Invert bool
 	Negative bool
 	SaveDir string
+	SavePNG bool
 	SaveText bool
 	Width int
 }
@@ -109,4 +116,71 @@ func computeBrightness(r, g, b uint8, charRamp string) (float64, int) {
 	}
 
 	return grey, index
+}
+
+// Generates ASCII image from ASCII string
+func ASCIIToImageArt(ascii string, config Config) (*image.RGBA, error) {
+	lines := strings.Split(ascii, "\n")
+	fontFace := basicfont.Face7x13
+	charWidth := fontFace.Advance
+	charHeight := fontFace.Height
+
+	imgWidth := charWidth * config.Width
+	imgHeight := charHeight * len(lines)
+	img := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
+
+	draw.Draw(img, img.Bounds(), image.Transparent, image.Point{}, draw.Src)
+
+	d := &font.Drawer{
+		Dst:  img,
+		Face: fontFace,
+	}
+
+	// Plain ASCII
+	if !(config.Colour || config.Greyscale) {
+		d.Src = image.NewUniform(imageColor.White)
+
+		for y, line := range lines {
+			d.Dot = fixed.P(0, (y + 1) * charHeight)
+			d.DrawString(line)
+		}
+
+		return img, nil
+	}
+
+	// Coloured or Greyscale ASCII
+	text, err := ansi.Parse(ascii)
+	if err != nil {
+		return nil, err
+	}
+
+	x, y := 0, 0
+	for _, seg := range text {
+		// Get colour
+		var col imageColor.Color = imageColor.White
+		if seg.FgCol != nil {
+			rgb := seg.FgCol.Rgb
+			col = imageColor.RGBA{rgb.R, rgb.G, rgb.B, 255}
+		}
+	
+		// Set colour
+		d.Src = image.NewUniform(col)
+	
+		// Draw each character
+		lines := strings.Split(seg.Label, "\n")
+		for i, line := range lines {
+			// Reset X on new lines
+			if i > 0 {
+				x = 0
+				y++
+			}
+
+			d.Dot = fixed.P(x * charWidth, (y + 1) * charHeight)
+			d.DrawString(line)
+
+			x += len(line)
+		}
+	}
+
+	return img, nil
 }

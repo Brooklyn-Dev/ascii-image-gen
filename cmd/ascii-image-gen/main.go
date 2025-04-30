@@ -9,6 +9,7 @@ import (
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/cli"
 	"github.com/Brooklyn-Dev/ascii-image-gen/internal/generator"
 	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
+	"github.com/leaanthony/go-ansi-parser"
 )
 
 func main() {
@@ -43,13 +44,8 @@ func main() {
 		fmt.Println(ascii)
 		
 		// Save if applicable
-		if config.SaveText {
-			filename := utils.CreateSaveFilename(imgPath, ".txt")
-			
-			if config.Colour {
-				ascii = utils.StripANSI(ascii)
-			}
-			
+		if config.SavePNG || config.SaveText {
+			// Get save directory
 			saveDir := ""
 			if config.SaveDir != "" {
 				if !utils.IsValidPath(config.SaveDir) {
@@ -59,22 +55,57 @@ func main() {
 
 				saveDir = config.SaveDir
 			}
-			
-			savePath := filepath.Join(saveDir, filename)
 
-			savePath, err := utils.FindAvaliablePath(savePath)
-			if err != nil {
-				log.Printf("Error preparing save path: %v\n", err)
-				continue
+			if config.SaveText {
+				textAscii := ascii
+				if config.Colour {
+					log.Println("Cleansing text save ASCII")
+					textAscii, err = ansi.Cleanse(ascii)
+					if err != nil {
+						log.Printf("Error cleansing text save ASCII: %v\n", err)
+						continue					
+					}
+				}
+	
+				log.Println("Preparing text save path")
+				savePath := filepath.Join(saveDir, utils.CreateSaveFilename(imgPath, ".txt"))
+				savePath, err := utils.FindAvaliablePath(savePath)
+				if err != nil {
+					log.Printf("Error preparing text save path: %v\n", err)
+					continue
+				}
+
+				log.Printf("Saving text: %s\n", savePath)
+				err = utils.SaveAsText(textAscii, savePath)
+				if err != nil {
+					log.Printf("Error saving text %s: %v\n", savePath, err)
+					continue
+				}	
 			}
 
-			log.Printf("Saving: %s\n", savePath)
+			if config.SavePNG {
+				log.Println("Preparing PNG save path")
+				savePath := filepath.Join(saveDir, utils.CreateSaveFilename(imgPath, ".png"))
+				savePath, err := utils.FindAvaliablePath(savePath)
+				if err != nil {
+					log.Printf("Error preparing PNG save path: %v\n", err)
+					continue
+				}
 
-			err = utils.SaveAsText(ascii, savePath)
-			if err != nil {
-				log.Printf("Error saving %s: %v\n", savePath, err)
-				continue
-			}	
+				log.Printf("Generating PNG: %s\n", savePath)
+				img, err := generator.ASCIIToImageArt(ascii, *config)
+				if err != nil {
+					log.Printf("Error generating PNG %s: %v\n", savePath, err)
+					continue
+				}
+				
+				log.Printf("Saving PNG: %s\n", savePath)
+				err = utils.SaveAsPNG(img, savePath)
+				if err != nil {
+					log.Printf("Error saving PNG %s: %v\n", savePath, err)
+					continue
+				}	
+			}
 		}
 	}
 }
