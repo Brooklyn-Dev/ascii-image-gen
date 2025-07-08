@@ -25,6 +25,7 @@ type Config struct {
 	Greyscale bool
 	Invert bool
 	Negative bool
+	SaveBG string
 	SaveDir string
 	SavePNG bool
 	SaveText bool
@@ -129,7 +130,13 @@ func ASCIIToImageArt(ascii string, config Config) (*image.RGBA, error) {
 	imgHeight := charHeight * len(lines)
 	img := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
 
-	draw.Draw(img, img.Bounds(), image.Transparent, image.Point{}, draw.Src)
+	bgCol, err := utils.StringToRGBA(config.SaveBG)
+	if err != nil {
+		return nil, err
+	}
+	imgBg := image.NewUniform(bgCol)
+
+	draw.Draw(img, img.Bounds(), imgBg, image.Point{}, draw.Src)
 
 	d := &font.Drawer{
 		Dst:  img,

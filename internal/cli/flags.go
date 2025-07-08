@@ -20,6 +20,7 @@ func ParseFlags() (*generator.Config, error) {
 		Greyscale: false,
 		Invert: false,
 		Negative: false,
+		SaveBG: "0,0,0,0",
 		SaveDir: "",
 		SavePNG: false,
 		SaveText: false,
@@ -49,6 +50,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Greyscale, "greyscale", false, "Grey the generated ASCII")
 	flag.BoolVar(&config.Invert, "invert", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "negative", false, "Negate colours of all characters")
+	flag.StringVar(&config.SaveBG, "save-bg", "0,0,0,0", "Set background RGBA for saved PNG files")
 	flag.StringVar(&config.SaveDir, "save-dir", "", "Save directory of saved files")
 	flag.BoolVar(&config.SavePNG, "save-png", false, "Save generated ASCII in png file(s)")
 	flag.BoolVar(&config.SaveText, "save-text", false, "Save generated ASCII in text file(s)")
@@ -80,6 +82,11 @@ func ParseFlags() (*generator.Config, error) {
 		fmt.Print(square)
 
 		os.Exit(0)
+	}
+
+	_, err := utils.StringToRGBA(config.SaveBG)
+	if err != nil {
+		return nil, fmt.Errorf("invalid -save-bg value: %v", err)
 	}
 
 	// Flag combination validations
