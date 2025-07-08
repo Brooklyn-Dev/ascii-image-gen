@@ -30,6 +30,7 @@ type Config struct {
 	SavePNG bool
 	SaveText bool
 	Verbose bool
+	Version bool
 	Width int
 }
 

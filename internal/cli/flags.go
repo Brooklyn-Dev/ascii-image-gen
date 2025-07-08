@@ -25,6 +25,7 @@ func ParseFlags() (*generator.Config, error) {
 		SavePNG: false,
 		SaveText: false,
 		Verbose: false,
+		Version: false,
 		Width: 100,
 	}
 
@@ -39,6 +40,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Negative, "n", false, "Negate colours of all characters")
 	flag.StringVar(&config.SaveDir, "d", "", "Save directory of saved files")
 	flag.BoolVar(&config.Verbose, "v", false, "Enable verbose logging")
+	flag.BoolVar(&config.Version, "V", false, "Shows version")
 	flag.IntVar(&config.Width, "w", 100, "Width of the generated ASCII")
 
 	// Define long flags
@@ -57,6 +59,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.SavePNG, "save-png", false, "Save generated ASCII in png file(s)")
 	flag.BoolVar(&config.SaveText, "save-text", false, "Save generated ASCII in text file(s)")
 	flag.BoolVar(&config.Verbose, "verbose", false, "Enable verbose logging")
+	flag.BoolVar(&config.Version, "version", false, "Shows version")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ASCII")
 
 	calibratePtr := flag.Bool("calibrate", false, "Calibrate to help manually determine aspect ratio")
@@ -64,6 +67,11 @@ func ParseFlags() (*generator.Config, error) {
 
 	// Parse flags
 	flag.Parse()
+
+	if config.Version {
+		println("ascii-image-gen version 1.0.0")
+		os.Exit(0)
+	}
 
 	if *calibratePtr {
 		// Calibration size range validation
