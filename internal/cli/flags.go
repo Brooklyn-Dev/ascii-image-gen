@@ -24,6 +24,7 @@ func ParseFlags() (*generator.Config, error) {
 		SaveDir: "",
 		SavePNG: false,
 		SaveText: false,
+		Verbose: false,
 		Width: 100,
 	}
 
@@ -37,6 +38,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.BoolVar(&config.Invert, "i", false, "Invert the character ramp")
 	flag.BoolVar(&config.Negative, "n", false, "Negate colours of all characters")
 	flag.StringVar(&config.SaveDir, "d", "", "Save directory of saved files")
+	flag.BoolVar(&config.Verbose, "v", false, "Enable verbose logging")
 	flag.IntVar(&config.Width, "w", 100, "Width of the generated ASCII")
 
 	// Define long flags
@@ -54,6 +56,7 @@ func ParseFlags() (*generator.Config, error) {
 	flag.StringVar(&config.SaveDir, "save-dir", "", "Save directory of saved files")
 	flag.BoolVar(&config.SavePNG, "save-png", false, "Save generated ASCII in png file(s)")
 	flag.BoolVar(&config.SaveText, "save-text", false, "Save generated ASCII in text file(s)")
+	flag.BoolVar(&config.Verbose, "verbose", false, "Enable verbose logging")
 	flag.IntVar(&config.Width, "width", 100, "Width of the generated ASCII")
 
 	calibratePtr := flag.Bool("calibrate", false, "Calibrate to help manually determine aspect ratio")

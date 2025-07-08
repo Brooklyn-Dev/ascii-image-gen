@@ -29,6 +29,7 @@ type Config struct {
 	SaveDir string
 	SavePNG bool
 	SaveText bool
+	Verbose bool
 	Width int
 }
 

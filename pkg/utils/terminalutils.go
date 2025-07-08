@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"unicode/utf8"
 
@@ -14,4 +15,12 @@ func SupportsColour() bool {
 
 func SupportsUnicode(unicode string) bool {
 	return utf8.ValidString(fmt.Sprint(unicode))
+}
+
+var Verbose bool = false
+
+func VLog(format string, args ...any) {
+	if Verbose {
+		log.Printf(format, args...)
+	}
 }

@@ -15,13 +15,15 @@ import (
 func main() {
 	// Remove datetime from logs
 	log.SetFlags(0)
-
+	
 	// Parse command line flags and args
 	config, err := cli.ParseFlags()
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
+
+	utils.Verbose = config.Verbose
 
 	imgPaths, err := cli.ParseArgs()
 	if err != nil {
@@ -31,7 +33,7 @@ func main() {
 
 	// Process each image
 	for _, imgPath := range imgPaths {
-		log.Printf("Processing: %s\n", imgPath)
+		utils.VLog("Processing: %s\n", imgPath)
 
 		// Generate ASCII
 		ascii, err := generator.ImageFileToASCII(imgPath, *config)
@@ -59,7 +61,7 @@ func main() {
 			if config.SaveText {
 				textAscii := ascii
 				if config.Colour {
-					log.Println("Cleansing text save ASCII")
+					utils.VLog("Cleansing text save ASCII")
 					textAscii, err = ansi.Cleanse(ascii)
 					if err != nil {
 						log.Printf("Error cleansing text save ASCII: %v\n", err)
@@ -67,7 +69,7 @@ func main() {
 					}
 				}
 	
-				log.Println("Preparing text save path")
+				utils.VLog("Preparing text save path")
 				savePath := filepath.Join(saveDir, utils.CreateSaveFilename(imgPath, ".txt"))
 				savePath, err := utils.FindAvaliablePath(savePath)
 				if err != nil {
@@ -75,7 +77,7 @@ func main() {
 					continue
 				}
 
-				log.Printf("Saving text: %s\n", savePath)
+				utils.VLog("Saving text: %s\n", savePath)
 				err = utils.SaveAsText(textAscii, savePath)
 				if err != nil {
 					log.Printf("Error saving text %s: %v\n", savePath, err)
@@ -84,7 +86,7 @@ func main() {
 			}
 
 			if config.SavePNG {
-				log.Println("Preparing PNG save path")
+				utils.VLog("Preparing PNG save path")
 				savePath := filepath.Join(saveDir, utils.CreateSaveFilename(imgPath, ".png"))
 				savePath, err := utils.FindAvaliablePath(savePath)
 				if err != nil {
@@ -92,14 +94,14 @@ func main() {
 					continue
 				}
 
-				log.Printf("Generating PNG: %s\n", savePath)
+				utils.VLog("Generating PNG: %s\n", savePath)
 				img, err := generator.ASCIIToImageArt(ascii, *config)
 				if err != nil {
 					log.Printf("Error generating PNG %s: %v\n", savePath, err)
 					continue
 				}
 				
-				log.Printf("Saving PNG: %s\n", savePath)
+				utils.VLog("Saving PNG: %s\n", savePath)
 				err = utils.SaveAsPNG(img, savePath)
 				if err != nil {
 					log.Printf("Error saving PNG %s: %v\n", savePath, err)
