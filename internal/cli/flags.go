@@ -9,6 +9,55 @@ import (
 	"github.com/Brooklyn-Dev/ascii-image-gen/pkg/utils"
 )
 
+func init() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `
+ascii-image-gen
+A Go CLI to generate ascii-art from images and output in console and save as text/PNG
+
+Usage:
+	ascii-image-gen [OPTIONS] <image-path-1> [<image-path-2> ...]
+
+Options:
+	-a,  --aspect-ratio
+		Character aspect ratio (width:height) for your terminal font
+	-c,  --color, --colour
+		Colour the generated ASCII
+	-C,  --complex
+		Use more detailed character ramp
+	-g,  --grayscale, --greyscale
+		Grey the generated ASCII
+	-i,  --invert
+		Invert the character ramp
+	-n,  --negative
+		Negate colours of all characters
+	-v,  --verbose
+		Enable verbose logging
+	-V,  --version
+		Shows version
+	-w,  --width
+		Width of the generated ASCII
+	-x,  --flip-x
+		Horizontally flip the generated ASCII
+	-y,  --flip-y
+		Vertically flip the generated ASCII
+	
+	--calibrate
+		Calibrate to help manually determine aspect ratio
+	--calibration-size
+		Size of the calibration test
+	--save-bg
+		Set background RGBA for saved PNG files
+	--save-dir 
+		Save directory of saved files
+	--save-png
+		Save generated ASCII in png file(s)
+	--save-text
+		Save generated ASCII in text file(s)
+		`)
+	}
+}
+
 // Parses command line flags and returns config
 func ParseFlags() (*generator.Config, error) {
 	config := generator.Config{
@@ -93,6 +142,11 @@ func ParseFlags() (*generator.Config, error) {
 		fmt.Print(square)
 
 		os.Exit(0)
+	}
+
+	if len(flag.Args()) == 0 {
+		flag.Usage()
+		os.Exit(1)
 	}
 
 	_, err := utils.StringToRGBA(config.SaveBG)
